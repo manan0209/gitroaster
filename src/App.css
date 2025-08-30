@@ -44,7 +44,17 @@ body {
   letter-spacing: 0.04em;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.5em;
+}
+
+.version-badge {
+  background: #50fa7b;
+  color: #18181a;
+  padding: 0.2em 0.5em;
+  border-radius: 3px;
+  font-size: 0.8em;
+  font-weight: bold;
 }
 
 
@@ -290,29 +300,617 @@ body {
   letter-spacing: 0.01em;
 }
 
+/* Tab Bar */
+.tab-bar {
+  display: flex;
+  background: #23232b;
+  border-bottom: 1.5px solid #444;
+  border-top: 1.5px solid #444;
+}
+
+.tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.7em 1em;
+  color: #bfbfbf;
+  font-family: inherit;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  border-right: 1.5px solid #444;
+}
+
+.tab:last-child {
+  border-right: none;
+}
+
+.tab.active {
+  background: #18181a;
+  color: #ffb86c;
+  font-weight: bold;
+}
+
+.tab:hover:not(.active) {
+  background: rgba(255, 184, 108, 0.1);
+  color: #ffb86c;
+}
+
+.tab-icon {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Mode Toggle */
+.mode-toggle {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+.mode-btn {
+  background: #444;
+  color: #bfbfbf;
+  border: 1.5px solid #444;
+  border-radius: 4px;
+  padding: 0.4em 0.8em;
+  font-size: 0.9em;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn.active {
+  background: #ffb86c;
+  color: #18181a;
+  border-color: #ffb86c;
+  font-weight: bold;
+}
+
+.mode-btn:hover:not(.active) {
+  border-color: #ffb86c;
+  color: #ffb86c;
+}
+
+/* Repository Card */
+.repo-card {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  background: #23232b;
+  border: 1.5px solid #444;
+  border-radius: 6px;
+  padding: 0.7em 1em;
+  margin-bottom: 1em;
+  box-shadow: 0 1px 0 #222 inset;
+}
+
+.repo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+}
+
+.repo-name {
+  font-weight: bold;
+  color: #ffb86c;
+  font-size: 1.05em;
+}
+
+.repo-full-name {
+  color: #bfbfbf;
+  font-size: 0.95em;
+}
+
+.repo-stats {
+  display: flex;
+  gap: 1em;
+  font-size: 0.93em;
+  color: #bfbfbf;
+  margin-top: 0.15em;
+}
+
+/* Vote Button */
+.vote-btn {
+  background: transparent;
+  border: 1.5px solid #444;
+  border-radius: 4px;
+  padding: 0.4em 0.6em;
+  color: #bfbfbf;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  font-family: inherit;
+  font-size: 0.9em;
+}
+
+.vote-btn:hover:not(.voted):not(:disabled) {
+  border-color: #50fa7b;
+  color: #50fa7b;
+  background: rgba(80, 250, 123, 0.1);
+  transform: translateY(-1px);
+}
+
+.vote-btn.voted {
+  border-color: #50fa7b;
+  color: #50fa7b;
+  background: rgba(80, 250, 123, 0.2);
+}
+
+.vote-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Hall of Shame */
+.hall-of-shame {
+  padding: 1em;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.hall-header {
+  margin-bottom: 1em;
+  text-align: center;
+}
+
+.hall-header h3 {
+  color: #ffb86c;
+  margin: 0 0 0.3em 0;
+  font-size: 1.2em;
+}
+
+.hall-header p {
+  color: #bfbfbf;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.roast-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+
+.roast-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8em;
+  background: #23232b;
+  border: 1.5px solid #444;
+  border-radius: 4px;
+  padding: 0.7em;
+  transition: border-color 0.2s;
+}
+
+.roast-item:hover {
+  border-color: #ffb86c;
+}
+
+.roast-rank {
+  color: #ffb86c;
+  font-weight: bold;
+  font-size: 1.1em;
+  min-width: 2em;
+  text-align: center;
+}
+
+.roast-content {
+  flex: 1;
+}
+
+.roast-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.4em;
+  font-size: 0.85em;
+}
+
+.roast-target {
+  color: #ffb86c;
+  font-weight: bold;
+}
+
+.repo-name {
+  color: #bfbfbf;
+}
+
+.roast-type {
+  background: #444;
+  color: #bfbfbf;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+
+.roast-time {
+  color: #888;
+}
+
+.roast-text {
+  color: #e0e0e0;
+  line-height: 1.4;
+  font-size: 0.95em;
+}
+
+.roast-votes {
+  margin-left: auto;
+}
+
+/* Roast of the Day */
+.roast-of-day {
+  padding: 1em;
+  max-height: 400px;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.daily-header {
+  margin-bottom: 1.5em;
+}
+
+.daily-header h3 {
+  color: #ffb86c;
+  margin: 0 0 0.3em 0;
+  font-size: 1.2em;
+}
+
+.daily-header p {
+  color: #bfbfbf;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.featured-roast {
+  margin-bottom: 1.5em;
+}
+
+.crown {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+.roast-card {
+  background: #23232b;
+  border: 2px solid #ffb86c;
+  border-radius: 6px;
+  padding: 1em;
+  text-align: left;
+}
+
+.roast-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.8em;
+}
+
+.winner-badge {
+  background: #50fa7b;
+  color: #18181a;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.daily-info {
+  color: #888;
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+.daily-info p {
+  margin: 0;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 2em 1em;
+}
+
+.ascii-art {
+  color: #444;
+  font-size: 0.8em;
+  margin-bottom: 1em;
+}
+
+.loading {
+  text-align: center;
+  color: #bfbfbf;
+  padding: 2em;
+}
+
+/* Roast Actions Update */
+.roast-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
 /* Custom scrollbar styling */
 .terminal-output::-webkit-scrollbar,
 .roast::-webkit-scrollbar,
-.roast-container::-webkit-scrollbar {
+.roast-container::-webkit-scrollbar,
+.hall-of-shame::-webkit-scrollbar,
+.roast-of-day::-webkit-scrollbar {
   width: 8px;
 }
 
 .terminal-output::-webkit-scrollbar-track,
 .roast::-webkit-scrollbar-track,
-.roast-container::-webkit-scrollbar-track {
+.roast-container::-webkit-scrollbar-track,
+.hall-of-shame::-webkit-scrollbar-track,
+.roast-of-day::-webkit-scrollbar-track {
   background: #23232b;
   border-radius: 4px;
 }
 
 .terminal-output::-webkit-scrollbar-thumb,
 .roast::-webkit-scrollbar-thumb,
-.roast-container::-webkit-scrollbar-thumb {
+.roast-container::-webkit-scrollbar-thumb,
+.hall-of-shame::-webkit-scrollbar-thumb,
+.roast-of-day::-webkit-scrollbar-thumb {
   background: #444;
   border-radius: 4px;
 }
 
 .terminal-output::-webkit-scrollbar-thumb:hover,
 .roast::-webkit-scrollbar-thumb:hover,
-.roast-container::-webkit-scrollbar-thumb:hover {
+.roast-container::-webkit-scrollbar-thumb:hover,
+.hall-of-shame::-webkit-scrollbar-thumb:hover,
+.roast-of-day::-webkit-scrollbar-thumb:hover {
   background: #ffb86c;
+}
+
+/* New v2 Components Styles */
+
+/* Tab Bar */
+.tab-bar {
+  display: flex;
+  background: #23232b;
+  border-bottom: 1.5px solid #444;
+}
+
+.tab {
+  flex: 1;
+  background: transparent;
+  color: #bfbfbf;
+  border: none;
+  padding: 0.8em 1em;
+  font-family: inherit;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  border-right: 1px solid #444;
+}
+
+.tab:last-child {
+  border-right: none;
+}
+
+.tab:hover {
+  background: rgba(255, 184, 108, 0.1);
+  color: #ffb86c;
+}
+
+.tab.active {
+  background: #ffb86c;
+  color: #18181a;
+  font-weight: bold;
+}
+
+.tab-icon {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.tab-label {
+  font-size: 0.85em;
+}
+
+/* Terminal Content */
+.terminal-content {
+  background: #18181a;
+  color: #e0e0e0;
+  min-height: 300px;
+  max-height: 500px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+}
+
+/* Roast Form Updates */
+.roast-form {
+  padding: 1em;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+.mode-btn {
+  background: #23232b;
+  color: #bfbfbf;
+  border: 1.5px solid #444;
+  border-radius: 4px;
+  padding: 0.4em 0.8em;
+  font-family: inherit;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn:hover {
+  border-color: #ffb86c;
+  color: #ffb86c;
+}
+
+.mode-btn.active {
+  background: #ffb86c;
+  color: #18181a;
+  border-color: #ffb86c;
+  font-weight: bold;
+}
+
+.mode-btn:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* Repository Card */
+.repo-card {
+  background: #23232b;
+  border: 1.5px solid #444;
+  border-radius: 6px;
+  padding: 0.7em 1em;
+  margin-bottom: 1em;
+  box-shadow: 0 1px 0 #222 inset;
+}
+
+.repo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+}
+
+.repo-name {
+  font-weight: bold;
+  color: #ffb86c;
+  font-size: 1.05em;
+}
+
+.repo-full-name {
+  color: #bfbfbf;
+  font-size: 0.95em;
+}
+
+.repo-stats {
+  display: flex;
+  gap: 1em;
+  font-size: 0.93em;
+  color: #bfbfbf;
+  margin-top: 0.15em;
+}
+
+/* Vote Button */
+.vote-btn {
+  background: transparent;
+  border: 1.5px solid #444;
+  border-radius: 4px;
+  padding: 0.4em 0.6em;
+  color: #bfbfbf;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.vote-btn:hover:not(:disabled) {
+  border-color: #50fa7b;
+  color: #50fa7b;
+  background: rgba(80, 250, 123, 0.1);
+  transform: translateY(-1px);
+}
+
+.vote-btn.voted {
+  border-color: #50fa7b;
+  color: #50fa7b;
+  background: rgba(80, 250, 123, 0.2);
+}
+
+.vote-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.vote-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Loading Animation */
+.loading {
+  text-align: center;
+  padding: 2em;
+}
+
+.loading-text {
+  color: #bfbfbf;
+  margin-bottom: 1em;
+}
+
+.loading-bar {
+  width: 100%;
+  height: 4px;
+  background: #23232b;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #ffb86c, #50fa7b);
+  animation: loading-animate 2s ease-in-out infinite;
+}
+
+@keyframes loading-animate {
+  0% { width: 0%; }
+  50% { width: 70%; }
+  100% { width: 100%; }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .terminal-window {
+    max-width: 95%;
+    margin: 1em;
+  }
+  
+  .tab-label {
+    display: none;
+  }
+  
+  .mode-toggle {
+    flex-direction: column;
+  }
+  
+  .profile-stats,
+  .repo-stats {
+    flex-direction: column;
+    gap: 0.3em;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab {
+    padding: 0.6em 0.5em;
+  }
+  
+  .roast-form {
+    padding: 0.8em;
+  }
+  
+  .hall-header h3,
+  .daily-header h3 {
+    font-size: 1.1em;
+  }
 }
