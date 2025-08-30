@@ -29,6 +29,7 @@ export const roastOperations = {
 
   // Get Hall of Shame (top voted roasts)
   async getHallOfShame(limit = 10) {
+    console.log('Fetching Hall of Shame...')
     const { data, error } = await supabase
       .from('roasts')
       .select('*')
@@ -36,7 +37,12 @@ export const roastOperations = {
       .order('created_at', { ascending: false })
       .limit(limit)
     
-    if (error) throw error
+    if (error) {
+      console.error('Error fetching Hall of Shame:', error)
+      throw error
+    }
+    
+    console.log('Hall of Shame data:', data)
     return data
   },
 
@@ -59,46 +65,69 @@ export const roastOperations = {
 
   // Vote on a roast
   async voteRoast(roastId, fingerprint) {
-    // Check if already voted
-    const { data: existingVote } = await supabase
-      .from('votes')
-      .select('id')
-      .eq('roast_id', roastId)
-      .eq('fingerprint', fingerprint)
-      .single()
+    console.log('Starting vote process for roastId:', roastId, 'fingerprint:', fingerprint)
     
-    if (existingVote) {
-      throw new Error('Already voted on this roast')
-    }
-
-    // Add vote
+    // Skip the vote check for now since it's causing 406 errors
+    // The database unique constraint will prevent duplicate votes anyway
+    
+    // Add vote (the trigger will automatically update the roast vote count)
     const { error: voteError } = await supabase
       .from('votes')
       .insert([{ roast_id: roastId, fingerprint }])
     
-    if (voteError) throw voteError
+    if (voteError) {
+      console.error('Error inserting vote:', voteError)
+      
+      // Check if it's a duplicate vote error
+      if (voteError.code === '23505' || voteError.message.includes('duplicate')) {
+        throw new Error('Already voted on this roast')
+      }
+      
+      throw voteError
+    }
 
-    // Increment vote count
-    const { data, error } = await supabase
+    // Get the updated roast data
+    const { data: updatedRoast, error: fetchError } = await supabase
       .from('roasts')
-      .update({ votes: supabase.sql`votes + 1` })
+      .select('*')
       .eq('id', roastId)
-      .select()
+      .single()
     
-    if (error) throw error
-    return data[0]
+    if (fetchError) {
+      console.error('Error fetching updated roast:', fetchError)
+      throw fetchError
+    }
+
+    console.log('Vote added successfully, updated roast:', updatedRoast)
+    return updatedRoast
   },
 
   // Check if user has voted on a roast
   async hasVoted(roastId, fingerprint) {
-    const { data } = await supabase
-      .from('votes')
-      .select('id')
-      .eq('roast_id', roastId)
-      .eq('fingerprint', fingerprint)
-      .single()
-    
-    return !!data
+    try {
+      const { data, error } = await supabase
+        .from('votes')
+        .select('id')
+        .eq('roast_id', roastId)
+        .eq('fingerprint', fingerprint)
+        .single()
+      
+      // If there's an error but it's just "no rows found", return false
+      if (error && error.code === 'PGRST116') {
+        return false
+      }
+      
+      if (error) {
+        console.error('Error checking vote status:', error)
+        // Return false to allow voting if we can't check status
+        return false
+      }
+      
+      return !!data
+    } catch (error) {
+      console.error('Error in hasVoted check:', error)
+      return false
+    }
   },
 
   // Get user's vote count for rate limiting

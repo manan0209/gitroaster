@@ -7,22 +7,30 @@ const HallOfShame = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    const loadHallOfShame = async () => {
-      try {
-        setLoading(true)
-        const data = await roastOperations.getHallOfShame(10)
-        setRoasts(data)
-      } catch (error) {
-        console.error('Error loading Hall of Shame:', error)
-        setError('Failed to load Hall of Shame')
-      } finally {
-        setLoading(false)
-      }
+  const loadHallOfShame = async () => {
+    try {
+      setLoading(true)
+      const data = await roastOperations.getHallOfShame(10)
+      console.log('Loaded Hall of Shame data:', data)
+      setRoasts(data)
+      setError('')
+    } catch (error) {
+      console.error('Error loading Hall of Shame:', error)
+      setError('Failed to load Hall of Shame')
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     loadHallOfShame()
   }, [])
+
+  const handleVoteUpdate = () => {
+    // Refresh the hall of shame when a vote is cast
+    console.log('Vote update detected, refreshing Hall of Shame...')
+    loadHallOfShame()
+  }
 
   const formatTimeAgo = (dateString) => {
     const date = new Date(dateString)
@@ -80,7 +88,20 @@ const HallOfShame = () => {
   return (
     <div className="hall-of-shame">
       <div className="hall-header">
-        <h3>Hall of Shame</h3>
+        <div className="hall-title-row">
+          <h3>Hall of Shame</h3>
+          <button 
+            className="refresh-btn" 
+            onClick={loadHallOfShame}
+            disabled={loading}
+            title="Refresh rankings"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20" stroke="currentColor" strokeWidth="2"/>
+              <path d="M20 12L17 9M20 12L17 15" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+          </button>
+        </div>
         <p>Top voted roasts of all time</p>
       </div>
       
@@ -102,7 +123,11 @@ const HallOfShame = () => {
               <div className="roast-text">{truncateRoast(roast.roast_text)}</div>
             </div>
             <div className="roast-votes">
-              <VoteButton roastId={roast.id} initialVotes={roast.votes} />
+              <VoteButton 
+                roastId={roast.id} 
+                initialVotes={roast.votes} 
+                onVoteUpdate={handleVoteUpdate}
+              />
             </div>
           </div>
         ))}

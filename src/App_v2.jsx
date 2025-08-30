@@ -187,13 +187,6 @@ function App() {
     })
   }
 
-  const handleVoteUpdate = (updatedRoast) => {
-    // Update the savedRoast with new vote count
-    if (savedRoast && updatedRoast.id === savedRoast.id) {
-      setSavedRoast(updatedRoast)
-    }
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!input.trim()) return
@@ -230,8 +223,6 @@ function App() {
         // Save to database
         try {
           const fingerprint = getUserFingerprint()
-          console.log('Saving roast to database with fingerprint:', fingerprint)
-          
           const saved = await roastOperations.saveRoast(
             input,
             roastText,
@@ -239,8 +230,6 @@ function App() {
             null,
             fingerprint
           )
-          
-          console.log('Roast saved successfully:', saved)
           setSavedRoast(saved)
         } catch (dbError) {
           console.error('Database save error:', dbError)
@@ -276,8 +265,6 @@ function App() {
         // Save to database
         try {
           const fingerprint = getUserFingerprint()
-          console.log('Saving repo roast to database with fingerprint:', fingerprint)
-          
           const saved = await roastOperations.saveRoast(
             username,
             roastText,
@@ -285,8 +272,6 @@ function App() {
             repoName,
             fingerprint
           )
-          
-          console.log('Repo roast saved successfully:', saved)
           setSavedRoast(saved)
         } catch (dbError) {
           console.error('Database save error:', dbError)
@@ -387,13 +372,7 @@ function App() {
               <div className="roast-header">
                 <span className="roast-title">Your Roast</span>
                 <div className="roast-actions">
-                  {savedRoast && (
-                    <VoteButton 
-                      roastId={savedRoast.id} 
-                      initialVotes={savedRoast.votes} 
-                      onVoteUpdate={handleVoteUpdate}
-                    />
-                  )}
+                  {savedRoast && <VoteButton roastId={savedRoast.id} initialVotes={savedRoast.votes} />}
                   <button className="copy-btn" onClick={copyRoast} title="Copy roast">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor"/>
