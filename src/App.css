@@ -48,6 +48,53 @@ body {
   gap: 0.5em;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.header-title {
+  color: #ffb86c;
+  font-weight: bold;
+}
+
+.header-tabs {
+  display: flex;
+  gap: 0.5em;
+}
+
+.tab {
+  background: transparent;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 0.4em 0.8em;
+  color: #bfbfbf;
+  font-size: 0.9em;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  border-color: #ffb86c;
+  color: #ffb86c;
+  background: rgba(255, 184, 108, 0.1);
+}
+
+.tab.active {
+  background: #ffb86c;
+  color: #23232b;
+  border-color: #ffb86c;
+  font-weight: bold;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .version-badge {
   background: #50fa7b;
   color: #18181a;
@@ -181,6 +228,106 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5em;
+}
+
+.roast-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.repo-card {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  background: #23232b;
+  border: 1.5px solid #444;
+  border-radius: 6px;
+  padding: 0.7em 1em;
+  margin-bottom: 1em;
+  box-shadow: 0 1px 0 #222 inset;
+}
+
+.repo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  width: 100%;
+}
+
+.repo-name {
+  font-weight: bold;
+  color: #ffb86c;
+  font-size: 1.05em;
+}
+
+.repo-description {
+  color: #bfbfbf;
+  font-size: 0.9em;
+  margin-bottom: 0.3em;
+}
+
+.repo-stats {
+  display: flex;
+  gap: 1em;
+  font-size: 0.85em;
+  color: #bfbfbf;
+  flex-wrap: wrap;
+}
+
+.loading {
+  text-align: center;
+  color: #ffb86c;
+  padding: 2em;
+}
+
+.loading-text {
+  margin-bottom: 1em;
+  font-weight: bold;
+}
+
+.loading-dots {
+  font-size: 2em;
+  animation: loadingDots 1.5s infinite;
+}
+
+@keyframes loadingDots {
+  0%, 20% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.vote-btn {
+  background: transparent;
+  border: 1.5px solid #444;
+  border-radius: 4px;
+  padding: 0.4em 0.6em;
+  color: #bfbfbf;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 0.85em;
+  font-family: inherit;
+}
+
+.vote-btn:hover:not(:disabled) {
+  border-color: #50fa7b;
+  color: #50fa7b;
+  background: rgba(80, 250, 123, 0.1);
+  transform: translateY(-1px);
+}
+
+.vote-btn.voted {
+  border-color: #50fa7b;
+  color: #50fa7b;
+  background: rgba(80, 250, 123, 0.2);
+}
+
+.vote-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .roast-title {

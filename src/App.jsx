@@ -2,17 +2,17 @@ import { useState } from 'react'
 import './App.css'
 
 // Components
-import TabBar from './components/TabBar'
-import RoastForm from './components/RoastForm'
-import RoastDisplay from './components/RoastDisplay'
 import HallOfShame from './components/HallOfShame'
-import RoastOfTheDay from './components/RoastOfTheDay'
+import VoteButton from './components/VoteButton'
 
 // Services
 import { githubService } from './services/github'
 import { aiService } from './services/ai'
 import { roastOperations } from './services/supabase'
 import { getUserFingerprint } from './services/fingerprint'
+
+const GITHUB_API = 'https://api.github.com/users/'
+const GITHUB_REPOS_API = 'https://api.github.com/users/'
 
 const fallbackRoasts = [
   "Wow, your GitHub is so empty, even tumbleweeds are bored.",
@@ -48,6 +48,19 @@ const getPersonalizedFallback = (profile) => {
   return brutalRoasts[Math.floor(Math.random() * brutalRoasts.length)]
 }
 
+const getRepoFallback = (repo) => {
+  const repoRoasts = [
+    `${repo.name}? More like ${repo.stargazers_count} people accidentally clicked star. Your ${repo.language || 'mystery'} code is so bad, even Stack Overflow refuses to help.`,
+    
+    `${repo.open_issues_count} open issues and counting - at least the bugs are consistent. ${repo.forks_count} forks? That's generous, probably just people trying to fix your code.`,
+    
+    `Last updated ${new Date(repo.updated_at).toLocaleDateString()}? Even your commits have given up. ${repo.stargazers_count} stars for this masterpiece of digital disappointment.`,
+    
+    `${repo.description || 'No description'} - even your repo description is more exciting than your code. ${repo.language} development at its finest... if you squint and look away.`
+  ]
+  return repoRoasts[Math.floor(Math.random() * repoRoasts.length)]
+}
+
 const funTips = [
   "Tip: Don't take it personally. Even Linus gets roasted!",
   "Pro tip: The more you code, the more you get roasted.",
@@ -58,7 +71,10 @@ const funTips = [
 
 const analyzeRepositories = async (username) => {
   try {
-    const repos = await githubService.getRepositories(username, 10)
+    const reposRes = await fetch(`${GITHUB_REPOS_API}${username}/repos?sort=updated&per_page=10`)
+    if (!reposRes.ok) return { error: 'Could not fetch repos' }
+    
+    const repos = await reposRes.json()
     const analysis = {
       totalRepos: repos.length,
       languages: [],
@@ -118,110 +134,20 @@ const analyzeRepositories = async (username) => {
   }
 }
 
-const analyzeRepository = async (username, repoName) => {
-  try {
-    const [repo, languages, commits, contents] = await Promise.all([
-      githubService.getRepository(username, repoName),
-      githubService.getRepositoryLanguages(username, repoName),
-      githubService.getRecentCommits(username, repoName, 10),
-      githubService.getRepositoryContents(username, repoName)
-    ])
-
-    return { repo, languages, commits, contents }
-  } catch (error) {
-    throw new Error('Failed to analyze repository: ' + error.message)
-  }
-}
-
 function App() {
-  const [activeTab, setActiveTab] = useState('roast')
+  const [activeTab, setActiveTab] = useState('profile')
+  const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [roast, setRoast] = useState(null)
+  const [roast, setRoast] = useState('')
   const [error, setError] = useState('')
   const [profile, setProfile] = useState(null)
   const [repo, setRepo] = useState(null)
+  const [savedRoast, setSavedRoast] = useState(null)
   const [tip, setTip] = useState(funTips[Math.floor(Math.random() * funTips.length)])
 
-  const handleRoastSubmit = async (input, mode, username, repoName) => {
-    setLoading(true)
-    setError('')
-    setRoast(null)
-    setProfile(null)
-    setRepo(null)
-    setTip(funTips[Math.floor(Math.random() * funTips.length)])
-    
-    try {
-      let roastResult = null
-      let profileData = null
-      let repoData = null
-
-      if (mode === 'profile') {
-        // Profile roasting logic
-        profileData = await githubService.getProfile(input)
-        setProfile(profileData)
-        
-        const repoAnalysis = await analyzeRepositories(input)
-        console.log('Repository analysis:', repoAnalysis)
-        
-        try {
-          const roastText = await aiService.generateProfileRoast(profileData, repoAnalysis)
-          roastResult = { roast_text: roastText }
-        } catch (aiError) {
-          console.error('AI API Error:', aiError)
-          roastResult = { roast_text: getPersonalizedFallback(profileData) }
-        }
-      } else {
-        // Repository roasting logic
-        const repoAnalysisData = await analyzeRepository(username, repoName)
-        repoData = repoAnalysisData.repo
-        setRepo(repoData)
-        
-        try {
-          const roastText = await aiService.generateRepositoryRoast(
-            repoAnalysisData.repo,
-            repoAnalysisData.languages,
-            repoAnalysisData.commits,
-            repoAnalysisData.contents
-          )
-          roastResult = { roast_text: roastText }
-        } catch (aiError) {
-          console.error('AI API Error:', aiError)
-          // Generate fallback repo roast
-          roastResult = { 
-            roast_text: `${repoData.name}? More like ${repoData.stargazers_count} people accidentally clicked star. Your ${repoData.language || 'mystery'} code is so bad, even Stack Overflow refuses to help. ${repoData.open_issues_count} open issues and counting - at least the bugs are consistent.`
-          }
-        }
-      }
-
-      // Save roast to database
-      try {
-        const fingerprint = getUserFingerprint()
-        const savedRoast = await roastOperations.saveRoast(
-          mode === 'profile' ? input : username,
-          roastResult.roast_text,
-          mode,
-          mode === 'repo' ? repoName : null,
-          fingerprint
-        )
-        setRoast(savedRoast)
-      } catch (dbError) {
-        console.error('Database save error:', dbError)
-        // Still show the roast even if save fails
-        setRoast(roastResult)
-      }
-
-    } catch (err) {
-      console.error('Roast generation error:', err)
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleShare = () => {
-    const roastText = roast?.roast_text || roast
-    const target = profile?.login || `${repo?.owner?.login}/${repo?.name}`
-    const shareText = `Just got roasted by GitRoaster!\n\n"${roastText}"\n\n@${target} | Check out GitRoaster for your own roast!`
+  const shareRoast = () => {
+    const target = activeTab === 'profile' ? `@${profile?.login}` : `${repo?.full_name}`
+    const shareText = `Just got roasted by GitRoaster!\n\n"${roast}"\n\n${target} | Check out GitRoaster for your own roast!`
     
     if (navigator.share) {
       navigator.share({
@@ -241,16 +167,15 @@ function App() {
     }
   }
 
-  const handleCopy = () => {
-    const roastText = roast?.roast_text || roast
-    navigator.clipboard.writeText(roastText).then(() => {
+  const copyRoast = () => {
+    navigator.clipboard.writeText(roast).then(() => {
       const originalTip = tip
       setTip('Roast copied to clipboard!')
       setTimeout(() => setTip(originalTip), 2000)
     }).catch(() => {
       // Fallback for older browsers
       const textArea = document.createElement('textarea')
-      textArea.value = roastText
+      textArea.value = roast
       document.body.appendChild(textArea)
       textArea.select()
       document.execCommand('copy')
@@ -262,21 +187,138 @@ function App() {
     })
   }
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'hall-of-shame':
-        return <HallOfShame />
-      case 'roast-of-day':
-        return <RoastOfTheDay />
-      default:
-        return (
-          <div className="roast-tab">
-            <RoastForm onSubmit={handleRoastSubmit} loading={loading} />
-            
-            {error && <div className="error">{error}</div>}
-            
-            {!profile && !repo && !roast && !error && !loading && (
-              <pre className="terminal-ascii">{`
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!input.trim()) return
+    
+    setLoading(true)
+    setError('')
+    setRoast('')
+    setProfile(null)
+    setRepo(null)
+    setSavedRoast(null)
+    setTip(funTips[Math.floor(Math.random() * funTips.length)])
+    
+    try {
+      if (activeTab === 'profile') {
+        // Profile roasting
+        const res = await fetch(GITHUB_API + input)
+        if (!res.ok) throw new Error('GitHub user not found!')
+        const profileData = await res.json()
+        setProfile(profileData)
+        
+        const repoAnalysis = await analyzeRepositories(input)
+        console.log('Repository analysis:', repoAnalysis)
+        
+        let roastText = ''
+        try {
+          roastText = await aiService.generateProfileRoast(profileData, repoAnalysis)
+        } catch (aiError) {
+          console.error('AI API Error:', aiError)
+          roastText = getPersonalizedFallback(profileData)
+        }
+        
+        setRoast(roastText)
+        
+        // Save to database
+        try {
+          const fingerprint = getUserFingerprint()
+          const saved = await roastOperations.saveRoast(
+            input,
+            roastText,
+            'profile',
+            null,
+            fingerprint
+          )
+          setSavedRoast(saved)
+        } catch (dbError) {
+          console.error('Database save error:', dbError)
+          // Continue without saving
+        }
+        
+      } else if (activeTab === 'repo') {
+        // Repository roasting
+        const [username, repoName] = input.split('/')
+        if (!username || !repoName) {
+          throw new Error('Please enter in format: username/repository')
+        }
+        
+        const repoRes = await fetch(`${GITHUB_API}${username}`)
+        const repoDataRes = await fetch(`https://api.github.com/repos/${username}/${repoName}`)
+        
+        if (!repoRes.ok) throw new Error('GitHub user not found!')
+        if (!repoDataRes.ok) throw new Error('Repository not found!')
+        
+        const repoData = await repoDataRes.json()
+        setRepo(repoData)
+        
+        let roastText = ''
+        try {
+          roastText = await aiService.generateRepositoryRoast(repoData, {}, [], [])
+        } catch (aiError) {
+          console.error('AI API Error:', aiError)
+          roastText = getRepoFallback(repoData)
+        }
+        
+        setRoast(roastText)
+        
+        // Save to database
+        try {
+          const fingerprint = getUserFingerprint()
+          const saved = await roastOperations.saveRoast(
+            username,
+            roastText,
+            'repo',
+            repoName,
+            fingerprint
+          )
+          setSavedRoast(saved)
+        } catch (dbError) {
+          console.error('Database save error:', dbError)
+          // Continue without saving
+        }
+      }
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const renderMainContent = () => {
+    if (activeTab === 'hall-of-shame') {
+      return <HallOfShame />
+    }
+
+    return (
+      <div className="main-content">
+        <form className="terminal-form" onSubmit={handleSubmit}>
+          <label htmlFor="input">
+            $ github-roast 
+            <span style={{color:'#ffb86c'}}>
+              [{activeTab === 'profile' ? 'username' : 'username/repo'}]
+            </span>
+          </label>
+          <input
+            id="input"
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder={activeTab === 'profile' ? 'octocat' : 'octocat/Hello-World'}
+            autoFocus
+            required
+            autoComplete="off"
+          />
+          <button type="submit" disabled={loading || !input.trim()}>
+            {loading ? 'Roasting...' : 'Roast Now!'}
+          </button>
+        </form>
+
+        <div className="terminal-output">
+          {error && <div className="error">{error}</div>}
+          
+          {!profile && !repo && !roast && !error && !loading && (
+            <pre className="terminal-ascii">{`
    _____ _ _   _____                 _            
   / ____(_) | |  __ \               | |           
  | |  __ _| |_| |__) |___  ___ _ __ | |_ ___ _ __ 
@@ -284,47 +326,101 @@ function App() {
  | |__| | | |_| | \ \  __/  __/ | | | ||  __/ |   
   \_____|_|\__|_|  \_\___|\___|_| |_|\__\___|_|   
                                                    
-              GitRoaster v2.0
-            Now with voting and more!
+              v2.0 - Now with voting!
 `}</pre>
-            )}
-            
-            {loading && (
-              <div className="loading">
-                <div className="loading-text">Analyzing and generating roast...</div>
-                <div className="loading-bar">
-                  <div className="loading-progress"></div>
+          )}
+          
+          {loading && (
+            <div className="loading">
+              <div className="loading-text">Analyzing and generating brutal roast...</div>
+              <div className="loading-dots">...</div>
+            </div>
+          )}
+          
+          {profile && (
+            <div className="profile-card">
+              <img src={profile.avatar_url} alt="avatar" className="avatar" />
+              <div className="profile-info">
+                <span className="profile-name">{profile.name || profile.login}</span>
+                <span className="profile-username">@{profile.login}</span>
+                <div className="profile-stats">
+                  <span>Repos: {profile.public_repos}</span>
+                  <span>Followers: {profile.followers}</span>
+                  <span>Following: {profile.following}</span>
                 </div>
               </div>
-            )}
-            
-            {roast && (
-              <RoastDisplay
-                roast={roast}
-                profile={profile}
-                repo={repo}
-                onShare={handleShare}
-                onCopy={handleCopy}
-              />
-            )}
-          </div>
-        )
-    }
+            </div>
+          )}
+          
+          {repo && (
+            <div className="repo-card">
+              <div className="repo-info">
+                <span className="repo-name">{repo.full_name}</span>
+                <span className="repo-description">{repo.description || 'No description'}</span>
+                <div className="repo-stats">
+                  <span>Language: {repo.language || 'Unknown'}</span>
+                  <span>Stars: {repo.stargazers_count}</span>
+                  <span>Forks: {repo.forks_count}</span>
+                  <span>Issues: {repo.open_issues_count}</span>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {roast && (
+            <div className="roast-container">
+              <div className="roast-header">
+                <span className="roast-title">Your Roast</span>
+                <div className="roast-actions">
+                  {savedRoast && <VoteButton roastId={savedRoast.id} initialVotes={savedRoast.votes} />}
+                  <button className="copy-btn" onClick={copyRoast} title="Copy roast">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="roast">{roast}</div>
+              <button className="share-btn" onClick={shareRoast}>
+                Share This Roast
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="terminal-bg">
       <div className="terminal-window">
         <div className="terminal-header">
-          GitRoaster v2.0
-          <span className="version-badge">New Features!</span>
+          <div className="header-left">
+            <span className="header-title">GitRoaster v2.0</span>
+          </div>
+          <div className="header-tabs">
+            <button 
+              className={`tab ${activeTab === 'profile' ? 'active' : ''}`}
+              onClick={() => setActiveTab('profile')}
+            >
+              Profile
+            </button>
+            <button 
+              className={`tab ${activeTab === 'repo' ? 'active' : ''}`}
+              onClick={() => setActiveTab('repo')}
+            >
+              Repository
+            </button>
+            <button 
+              className={`tab ${activeTab === 'hall-of-shame' ? 'active' : ''}`}
+              onClick={() => setActiveTab('hall-of-shame')}
+            >
+              Hall of Shame
+            </button>
+          </div>
         </div>
         
-        <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
-        
-        <div className="terminal-content">
-          {renderContent()}
-        </div>
+        {renderMainContent()}
         
         <div className="terminal-tip">{tip}</div>
       </div>
