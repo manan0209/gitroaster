@@ -1,0 +1,318 @@
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: #18181a;
+  color: #e0e0e0;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+  margin: 0;
+  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+.terminal-bg {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #23232b 0%, #18181a 100%);
+}
+
+.terminal-window {
+  background: #18181a;
+  border: 1.5px solid #444;
+  border-radius: 8px;
+  box-shadow: 0 0 24px #000a, 0 2px 0 #222 inset;
+  width: 100%;
+  max-width: 420px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.terminal-header {
+  background: #23232b;
+  color: #ffb86c;
+  padding: 0.7em 1em;
+  font-weight: bold;
+  border-bottom: 1.5px solid #444;
+  font-size: 1.08em;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+
+.terminal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+  padding: 1.2em 1em 1em 1em;
+}
+
+.terminal-form label {
+  font-size: 0.98em;
+  color: #bfbfbf;
+  letter-spacing: 0.01em;
+}
+
+.terminal-form input {
+  background: #23232b;
+  color: #e0e0e0;
+  border: 1.5px solid #444;
+  border-radius: 4px;
+  padding: 0.5em;
+  font-size: 1em;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.terminal-form input:focus {
+  border-color: #ffb86c;
+}
+
+.terminal-form button {
+  background: #ffb86c;
+  color: #23232b;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5em 1em;
+  font-size: 1em;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 1px 0 #222 inset;
+}
+
+.terminal-form button:disabled {
+  background: #444;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.terminal-output {
+  background: #18181a;
+  color: #e0e0e0;
+  min-height: 80px;
+  max-height: 400px; /* Limit total output height */
+  padding: 1em;
+  font-size: 1em;
+  border-top: 1.5px solid #444;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-y: auto; /* Add scrolling to entire output area */
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  background: #23232b;
+  border: 1.5px solid #444;
+  border-radius: 6px;
+  padding: 0.7em 1em;
+  margin-bottom: 1em;
+  box-shadow: 0 1px 0 #222 inset;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid #ffb86c;
+  background: #23232b;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+}
+
+.profile-name {
+  font-weight: bold;
+  color: #ffb86c;
+  font-size: 1.05em;
+}
+
+.profile-username {
+  color: #bfbfbf;
+  font-size: 0.95em;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 1em;
+  font-size: 0.93em;
+  color: #bfbfbf;
+  margin-top: 0.15em;
+}
+
+.roast-container {
+  margin-top: 1em;
+  max-height: 300px; /* Limit height */
+  overflow-y: auto; /* Add scrolling if needed */
+  background: #23232b;
+  border: 1.5px solid #444;
+  border-radius: 4px;
+  padding: 0.7em;
+  box-shadow: 0 1px 0 #222 inset;
+}
+
+.roast-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+
+.roast-title {
+  color: #ffb86c;
+  font-weight: bold;
+  font-size: 0.95em;
+}
+
+.copy-btn {
+  background: transparent;
+  border: 1.5px solid #444;
+  border-radius: 4px;
+  padding: 0.4em;
+  color: #bfbfbf;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.copy-btn:hover {
+  border-color: #ffb86c;
+  color: #ffb86c;
+  background: rgba(255, 184, 108, 0.1);
+  transform: translateY(-1px);
+}
+
+.copy-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.roast {
+  color: #ff5555;
+  font-weight: bold;
+  font-size: 1.08em;
+  background: transparent; /* Remove background since container has it */
+  border-radius: 0; /* Remove border radius */
+  padding: 0; /* Remove padding since container has it */
+  box-shadow: none; /* Remove shadow since container has it */
+  border: none; /* Remove border since container has it */
+  margin-bottom: 0.7em;
+  line-height: 1.4; /* Better line spacing */
+  max-height: 200px; /* Limit roast text height */
+  overflow-y: auto; /* Add scrolling if text is too long */
+  word-wrap: break-word; /* Break long words */
+}
+
+.share-btn {
+  background: #50fa7b;
+  color: #18181a;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5em 1em;
+  font-size: 0.95em;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3em;
+  margin-top: 0.5em; /* Add some space from roast text */
+}
+
+.share-btn:hover {
+  background: #5af78e;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(80, 250, 123, 0.3);
+}
+
+.error {
+  color: #ff5555;
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+/* Fun terminal blinking cursor for roast */
+.roast::after {
+  content: '_';
+  animation: blink 1s steps(1) infinite;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Fun ASCII art for empty state */
+.terminal-ascii {
+  color: #444;
+  font-size: 0.95em;
+  text-align: center;
+  margin: 1.5em 0 0.5em 0;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+}
+
+.terminal-tip {
+  color: #888;
+  font-size: 0.93em;
+  text-align: center;
+  margin: 0.7em 0 0.5em 0;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+  opacity: 0.85;
+  letter-spacing: 0.01em;
+}
+
+/* Custom scrollbar styling */
+.terminal-output::-webkit-scrollbar,
+.roast::-webkit-scrollbar,
+.roast-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-output::-webkit-scrollbar-track,
+.roast::-webkit-scrollbar-track,
+.roast-container::-webkit-scrollbar-track {
+  background: #23232b;
+  border-radius: 4px;
+}
+
+.terminal-output::-webkit-scrollbar-thumb,
+.roast::-webkit-scrollbar-thumb,
+.roast-container::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.terminal-output::-webkit-scrollbar-thumb:hover,
+.roast::-webkit-scrollbar-thumb:hover,
+.roast-container::-webkit-scrollbar-thumb:hover {
+  background: #ffb86c;
+}
