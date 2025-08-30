@@ -231,7 +231,7 @@ ROAST THEM BRUTALLY based on their actual projects, language choices, naming con
             }
           ],
           temperature: 0.9,
-          max_tokens: 150, // Reduced for shorter, punchier roasts
+          max_tokens: 150, 
           top_p: 1,
           stream: false
         })

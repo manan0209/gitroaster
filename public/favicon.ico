@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff5555;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ffb86c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff5555;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="16" cy="16" r="15" fill="#18181a" stroke="#444" stroke-width="1"/>
+  
+  <!-- Terminal -->
+  <rect x="6" y="8" width="20" height="15" rx="1" fill="#23232b" stroke="#444" stroke-width="0.5"/>
+  
+  <!-- Fire -->
+  <path d="M16 12 C14 16, 13 18, 15 22 C16 23, 17 23, 18 22 C20 18, 19 16, 17 12 C16.5 11, 16.5 11, 16 12 Z" fill="url(#fireGrad)"/>
+  
+  <!-- Sparks -->
+  <circle cx="12" cy="15" r="0.5" fill="#ffb86c"/>
+  <circle cx="21" cy="17" r="0.5" fill="#ff5555"/>
+</svg>

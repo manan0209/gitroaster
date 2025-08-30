@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="fireGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff5555;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ffb86c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff5555;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="terminalGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#23232b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#18181a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#terminalGradient)" stroke="#444" stroke-width="2"/>
+  
+  <!-- Terminal window -->
+  <rect x="20" y="25" width="60" height="45" rx="3" fill="#18181a" stroke="#444" stroke-width="1.5"/>
+  
+  <!-- Terminal header -->
+  <rect x="20" y="25" width="60" height="8" rx="3" fill="#23232b"/>
+  
+  <!-- Terminal dots -->
+  <circle cx="26" cy="29" r="1" fill="#ff5555"/>
+  <circle cx="30" cy="29" r="1" fill="#ffb86c"/>
+  <circle cx="34" cy="29" r="1" fill="#50fa7b"/>
+  
+  <!-- Fire/roast flames -->
+  <path d="M50 40 C46 48, 42 52, 46 62 C50 66, 54 66, 58 62 C62 52, 58 48, 54 40 C52 36, 52 36, 50 40 Z" fill="url(#fireGradient)"/>
+  <path d="M52 42 C49 48, 47 51, 50 59 C52 62, 55 62, 57 59 C60 51, 58 48, 55 42 C54 40, 54 40, 52 42 Z" fill="#ffb86c" opacity="0.9"/>
+  
+  <!-- Small flame -->
+  <path d="M45 45 C43 49, 42 51, 44 56 C45 58, 47 58, 48 56 C50 51, 49 49, 47 45 C46 44, 46 44, 45 45 Z" fill="#ff5555" opacity="0.8"/>
+  
+  <!-- Sparks -->
+  <circle cx="40" cy="48" r="0.8" fill="#ffb86c"/>
+  <circle cx="62" cy="52" r="0.8" fill="#ff5555"/>
+  <circle cx="38" cy="55" r="0.6" fill="#ffb86c"/>
+  <circle cx="64" cy="46" r="0.6" fill="#ff5555"/>
+  
+  <!-- Text "R" for Roaster -->
+  <text x="50" y="58" font-family="monospace" font-size="12" font-weight="bold" fill="#ffb86c" text-anchor="middle">R</text>
+</svg>

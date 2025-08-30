@@ -29,7 +29,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 0 24px #000a, 0 2px 0 #222 inset;
   width: 100%;
-  max-width: 420px;
+  max-width: 520px; /* Increased from 420px to 520px */
   padding: 0;
   overflow: hidden;
 }
@@ -157,7 +157,7 @@ body {
 
 .roast-container {
   margin-top: 1em;
-  max-height: 300px; /* Limit height */
+  max-height: 480px; /* Increased height for better readability */
   overflow-y: auto; /* Add scrolling if needed */
   background: #23232b;
   border: 1.5px solid #444;
@@ -210,16 +210,16 @@ body {
   color: #ff5555;
   font-weight: bold;
   font-size: 1.08em;
-  background: transparent; /* Remove background since container has it */
-  border-radius: 0; /* Remove border radius */
-  padding: 0; /* Remove padding since container has it */
-  box-shadow: none; /* Remove shadow since container has it */
-  border: none; /* Remove border since container has it */
+  background: transparent; 
+  border-radius: 0; 
+  padding: 0; 
+  box-shadow: none; 
+  border: none;
   margin-bottom: 0.7em;
   line-height: 1.4; /* Better line spacing */
-  max-height: 200px; /* Limit roast text height */
+  max-height: 280px; /* Increased roast text height */
   overflow-y: auto; /* Add scrolling if text is too long */
-  word-wrap: break-word; /* Break long words */
+  word-wrap: break-word; 
 }
 
 .share-btn {
@@ -238,7 +238,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.3em;
-  margin-top: 0.5em; /* Add some space from roast text */
+  margin-top: 0.5em; 
 }
 
 .share-btn:hover {
@@ -253,7 +253,7 @@ body {
   margin-bottom: 1em;
 }
 
-/* Fun terminal blinking cursor for roast */
+
 .roast::after {
   content: '_';
   animation: blink 1s steps(1) infinite;
