@@ -230,7 +230,6 @@ function App() {
         // Save to database
         try {
           const fingerprint = getUserFingerprint()
-          console.log('Saving roast to database with fingerprint:', fingerprint)
           
           const saved = await roastOperations.saveRoast(
             input,
@@ -240,7 +239,6 @@ function App() {
             fingerprint
           )
           
-          console.log('Roast saved successfully:', saved)
           setSavedRoast(saved)
         } catch (dbError) {
           console.error('Database save error:', dbError)
@@ -276,7 +274,6 @@ function App() {
         // Save to database
         try {
           const fingerprint = getUserFingerprint()
-          console.log('Saving repo roast to database with fingerprint:', fingerprint)
           
           const saved = await roastOperations.saveRoast(
             username,
@@ -286,7 +283,6 @@ function App() {
             fingerprint
           )
           
-          console.log('Repo roast saved successfully:', saved)
           setSavedRoast(saved)
         } catch (dbError) {
           console.error('Database save error:', dbError)

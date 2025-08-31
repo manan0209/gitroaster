@@ -11,11 +11,9 @@ const HallOfShame = () => {
     try {
       setLoading(true)
       const data = await roastOperations.getHallOfShame(10)
-      console.log('Loaded Hall of Shame data:', data)
       setRoasts(data)
       setError('')
     } catch (error) {
-      console.error('Error loading Hall of Shame:', error)
       setError('Failed to load Hall of Shame')
     } finally {
       setLoading(false)
@@ -27,8 +25,6 @@ const HallOfShame = () => {
   }, [])
 
   const handleVoteUpdate = () => {
-    // Refresh the hall of shame when a vote is cast
-    console.log('Vote update detected, refreshing Hall of Shame...')
     loadHallOfShame()
   }
 
