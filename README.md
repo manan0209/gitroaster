@@ -1,14 +1,14 @@
 # GitRoaster
 
-A terminal-inspired web application that generates AI-powered roasts for GitHub profiles and repositories. Built with React and featuring a community voting system.
+A terminal-inspired web application that generates AI powered brutal roasts for GitHub profiles and repositories. Built with React and featuring a community voting system.
 
 ## Features
 
 - Profile and repository roasting with AI analysis
-- Real-time voting system with Hall of Shame leaderboard
-- Mobile-responsive terminal UI
+- Real time voting system with Hall of Shame leaderboard
+- Mobile responsive terminal UI
 - Anonymous voting with browser fingerprinting
-- Multi-dimensional project analysis (code quality and business concept)
+- Multi dimensional project analysis (code quality and business concept)
 - Expandable roast text in Hall of Shame
 
 
@@ -49,6 +49,5 @@ The application is optimized for deployment on Vercel:
 - `src/App.jsx`: Main application with tabbed interface
 - `src/components/`: React components (HallOfShame, VoteButton)
 - `src/services/`: API integrations (AI, Supabase, GitHub)
-- `src/App.css`: Terminal-inspired responsive styling
+- `src/App.css`: Terminal inspired responsive styling
 
-Built with modern web technologies for optimal performance and user experience.
