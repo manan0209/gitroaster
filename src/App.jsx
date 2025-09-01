@@ -170,18 +170,18 @@ function App() {
 
   const shareRoast = () => {
     const target = activeTab === 'profile' ? `@${profile?.login}` : `${repo?.full_name}`
-    const shareText = `Just got roasted by GitRoaster!\n\n"${roast}"\n\n${target} | Check out GitRoaster for your own roast!`
+    const shareText = `🔥 Just got BRUTALLY roasted by GitRoaster! 🔥\n\n"${roast}"\n\nTarget: ${target}\n\n💀 Think you can handle the heat? Get your own savage roast at:\n https://gitroaster.vercel.app\n\n#GitRoaster #CodeRoast #GitHub`
     
     if (navigator.share) {
       navigator.share({
-        title: 'GitRoaster - My GitHub Roast',
+        title: 'GitRoaster - My Brutal GitHub Roast',
         text: shareText,
-        url: window.location.href
+        url: 'https://gitroaster.vercel.app'
       }).catch(console.error)
     } else {
       navigator.clipboard.writeText(shareText).then(() => {
         const originalTip = tip
-        setTip('Roast copied to clipboard! Share it with your friends!')
+        setTip('Epic roast copied to clipboard! Share the brutality!')
         setTimeout(() => setTip(originalTip), 3000)
       }).catch(() => {
         const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`
