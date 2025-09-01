@@ -6,6 +6,7 @@ const HallOfShame = () => {
   const [roasts, setRoasts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [expandedRoasts, setExpandedRoasts] = useState(new Set())
 
   const loadHallOfShame = async () => {
     try {
@@ -46,6 +47,27 @@ const HallOfShame = () => {
   const truncateRoast = (text, maxLength = 120) => {
     if (text.length <= maxLength) return text
     return text.substring(0, maxLength) + '...'
+  }
+
+  const toggleRoastExpansion = (roastId) => {
+    setExpandedRoasts(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(roastId)) {
+        newSet.delete(roastId)
+      } else {
+        newSet.add(roastId)
+      }
+      return newSet
+    })
+  }
+
+  const getRoastText = (roast) => {
+    const isExpanded = expandedRoasts.has(roast.id)
+    const needsTruncation = roast.roast_text.length > 120
+    
+    if (!needsTruncation) return roast.roast_text
+    
+    return isExpanded ? roast.roast_text : truncateRoast(roast.roast_text)
   }
 
   if (loading) {
@@ -116,7 +138,17 @@ const HallOfShame = () => {
                 </span>
                 <span className="roast-time">{formatTimeAgo(roast.created_at)}</span>
               </div>
-              <div className="roast-text">{truncateRoast(roast.roast_text)}</div>
+              <div className="roast-text">
+                {getRoastText(roast)}
+                {roast.roast_text.length > 120 && (
+                  <button 
+                    className="expand-btn"
+                    onClick={() => toggleRoastExpansion(roast.id)}
+                  >
+                    {expandedRoasts.has(roast.id) ? ' Show less' : ' Show more'}
+                  </button>
+                )}
+              </div>
             </div>
             <div className="roast-votes">
               <VoteButton 

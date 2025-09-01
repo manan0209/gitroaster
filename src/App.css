@@ -762,6 +762,23 @@ body {
   font-size: 0.95em;
 }
 
+.expand-btn {
+  background: transparent;
+  border: none;
+  color: #ffb86c;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-decoration: underline;
+  margin-left: 0.3em;
+  transition: color 0.2s;
+}
+
+.expand-btn:hover {
+  color: #50fa7b;
+}
+
 .roast-votes {
   margin-left: auto;
 }
@@ -1134,5 +1151,12 @@ body {
   .hall-header h3,
   .daily-header h3 {
     font-size: 1.1em;
+  }
+  
+  .expand-btn {
+    padding: 0.3em 0.5em;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 }
