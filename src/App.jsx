@@ -83,20 +83,35 @@ const analyzeRepositories = async (username) => {
       totalStars: 0,
       totalForks: 0,
       recentActivity: false,
-      projectDescriptions: []
+      projectDescriptions: [],
+      averageSize: 0,
+      totalIssues: 0
     }
     
-    repos.forEach(repo => {
+    for (const repo of repos) {
       if (repo.language && !analysis.languages.includes(repo.language)) {
         analysis.languages.push(repo.language)
       }
       
-      if (repo.description || repo.name.toLowerCase().includes('readme')) {
-        analysis.hasReadmes++
+      try {
+        const contentsRes = await fetch(`https://api.github.com/repos/${username}/${repo.name}/contents`)
+        if (contentsRes.ok) {
+          const contents = await contentsRes.json()
+          const hasReadme = contents.some(file => 
+            file.name.toLowerCase().match(/^readme\.(md|txt|rst)$/)
+          )
+          if (hasReadme) analysis.hasReadmes++
+        }
+      } catch (e) {
+        if (repo.name.toLowerCase().includes('readme')) {
+          analysis.hasReadmes++
+        }
       }
       
       analysis.totalStars += repo.stargazers_count
       analysis.totalForks += repo.forks_count
+      analysis.totalIssues += repo.open_issues_count
+      analysis.averageSize += repo.size
       
       const sixMonthsAgo = new Date()
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
@@ -104,29 +119,37 @@ const analyzeRepositories = async (username) => {
         analysis.recentActivity = true
       }
       
-      if (repo.name || repo.description) {
-        analysis.projectDescriptions.push({
-          name: repo.name,
-          description: repo.description,
-          stars: repo.stargazers_count,
-          language: repo.language
-        })
-      }
+      analysis.projectDescriptions.push({
+        name: repo.name,
+        description: repo.description,
+        stars: repo.stargazers_count,
+        language: repo.language,
+        size: repo.size,
+        issues: repo.open_issues_count,
+        forks: repo.forks_count
+      })
       
-      // Identify project types based on name patterns
       const name = repo.name.toLowerCase()
-      if (name.includes('hello') || name.includes('test') || name.includes('practice')) {
-        analysis.projectTypes.push('tutorial/practice')
-      } else if (name.includes('clone') || name.includes('copy')) {
+      const desc = (repo.description || '').toLowerCase()
+      
+      if (name.includes('hello') || name.includes('test') || name.includes('practice') || name.includes('tutorial')) {
+        analysis.projectTypes.push('tutorial/learning')
+      } else if (name.includes('clone') || name.includes('copy') || desc.includes('clone')) {
         analysis.projectTypes.push('clone project')
-      } else if (name.includes('bot') || name.includes('scraper')) {
-        analysis.projectTypes.push('automation')
-      } else if (name.includes('api') || name.includes('backend')) {
-        analysis.projectTypes.push('backend')
-      } else if (name.includes('frontend') || name.includes('react') || name.includes('vue')) {
-        analysis.projectTypes.push('frontend')
+      } else if (name.includes('bot') || name.includes('scraper') || desc.includes('bot')) {
+        analysis.projectTypes.push('automation/bot')
+      } else if (name.includes('api') || name.includes('backend') || name.includes('server')) {
+        analysis.projectTypes.push('backend/api')
+      } else if (name.includes('frontend') || name.includes('react') || name.includes('vue') || name.includes('app')) {
+        analysis.projectTypes.push('frontend/app')
+      } else if (name.includes('fork') || repo.fork) {
+        analysis.projectTypes.push('forked repo')
+      } else if (repo.stargazers_count === 0 && repo.forks_count === 0) {
+        analysis.projectTypes.push('abandoned project')
       }
-    })
+    }
+    
+    analysis.averageSize = Math.round(analysis.averageSize / repos.length)
     
     return analysis
   } catch (error) {
@@ -173,7 +196,7 @@ function App() {
       setTip('Roast copied to clipboard!')
       setTimeout(() => setTip(originalTip), 2000)
     }).catch(() => {
-      // Fallback for older browsers
+
       const textArea = document.createElement('textarea')
       textArea.value = roast
       document.body.appendChild(textArea)
@@ -188,7 +211,7 @@ function App() {
   }
 
   const handleVoteUpdate = (updatedRoast) => {
-    // Update the savedRoast with new vote count
+
     if (savedRoast && updatedRoast.id === savedRoast.id) {
       setSavedRoast(updatedRoast)
     }
@@ -208,7 +231,7 @@ function App() {
     
     try {
       if (activeTab === 'profile') {
-        // Profile roasting
+
         const res = await fetch(GITHUB_API + input)
         if (!res.ok) throw new Error('GitHub user not found!')
         const profileData = await res.json()
@@ -227,7 +250,6 @@ function App() {
         
         setRoast(roastText)
         
-        // Save to database
         try {
           const fingerprint = getUserFingerprint()
           
@@ -242,7 +264,6 @@ function App() {
           setSavedRoast(saved)
         } catch (dbError) {
           console.error('Database save error:', dbError)
-          // Continue without saving
         }
         
       } else if (activeTab === 'repo') {
@@ -263,7 +284,21 @@ function App() {
         
         let roastText = ''
         try {
-          roastText = await aiService.generateRepositoryRoast(repoData, {}, [], [])
+          // Fetch actual repository data for accurate roasting
+          const [languages, commits, contents] = await Promise.all([
+            githubService.getRepositoryLanguages(username, repoName),
+            githubService.getRecentCommits(username, repoName, 10),
+            githubService.getRepositoryContents(username, repoName)
+          ])
+          
+          console.log('Repository analysis:', {
+            languages,
+            commitsCount: commits?.length,
+            contentsCount: contents?.length,
+            hasReadme: contents?.some(f => f.name.toLowerCase().match(/^readme\.(md|txt|rst)$/))
+          })
+          
+          roastText = await aiService.generateRepositoryRoast(repoData, languages, commits, contents)
         } catch (aiError) {
           console.error('AI API Error:', aiError)
           roastText = getRepoFallback(repoData)
@@ -271,7 +306,7 @@ function App() {
         
         setRoast(roastText)
         
-        // Save to database
+        
         try {
           const fingerprint = getUserFingerprint()
           
@@ -286,7 +321,7 @@ function App() {
           setSavedRoast(saved)
         } catch (dbError) {
           console.error('Database save error:', dbError)
-          // Continue without saving
+          
         }
       }
     } catch (err) {
@@ -410,6 +445,20 @@ function App() {
 
   return (
     <div className="terminal-bg">
+
+      <a 
+        href="https://github.com/manan0209/gitroaster" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="github-star-btn"
+        title="Star on GitHub"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.37 0 0 5.37 0 12C0 17.31 3.435 21.795 8.205 23.385C8.805 23.49 9.03 23.13 9.03 22.815C9.03 22.53 9.015 21.585 9.015 20.58C6 21.135 5.22 19.845 4.98 19.17C4.845 18.825 4.26 17.76 3.75 17.475C3.33 17.25 2.73 16.695 3.735 16.68C4.68 16.665 5.355 17.55 5.58 17.91C6.66 19.725 8.385 19.215 9.075 18.9C9.18 18.12 9.495 17.595 9.84 17.295C7.17 16.995 4.38 15.96 4.38 11.37C4.38 10.065 4.845 8.985 5.61 8.145C5.49 7.845 5.07 6.615 5.73 4.965C5.73 4.965 6.735 4.65 9.03 6.195C9.99 5.925 11.01 5.79 12.03 5.79C13.05 5.79 14.07 5.925 15.03 6.195C17.325 4.635 18.33 4.965 18.33 4.965C18.99 6.615 18.57 7.845 18.45 8.145C19.215 8.985 19.68 10.05 19.68 11.37C19.68 15.975 16.875 16.995 14.205 17.295C14.64 17.67 15.015 18.39 15.015 19.515C15.015 21.12 15 22.41 15 22.815C15 23.13 15.225 23.505 15.825 23.385C18.2072 22.5807 20.2772 21.0497 21.7437 19.0074C23.2101 16.965 23.9993 14.5143 24 12C24 5.37 18.63 0 12 0Z" fill="currentColor"/>
+        </svg>
+        <span>Star</span>
+      </a>
+      
       <div className="terminal-window">
         <div className="terminal-header">
           <div className="header-left">

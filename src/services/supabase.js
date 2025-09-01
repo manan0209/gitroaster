@@ -5,7 +5,6 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-// Database operations
 export const roastOperations = {
   // Save a new roast
   async saveRoast(username, roastText, roastType = 'profile', repoName = null, fingerprint) {
@@ -67,10 +66,6 @@ export const roastOperations = {
   async voteRoast(roastId, fingerprint) {
     console.log('Starting vote process for roastId:', roastId, 'fingerprint:', fingerprint)
     
-    // Skip the vote check for now since it's causing 406 errors
-    // The database unique constraint will prevent duplicate votes anyway
-    
-    // Add vote (the trigger will automatically update the roast vote count)
     const { error: voteError } = await supabase
       .from('votes')
       .insert([{ roast_id: roastId, fingerprint }])

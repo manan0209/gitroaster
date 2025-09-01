@@ -21,6 +21,46 @@ body {
   align-items: center;
   justify-content: center;
   background: linear-gradient(180deg, #23232b 0%, #18181a 100%);
+  position: relative;
+}
+
+.github-star-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #23232b;
+  border: 1.5px solid #444;
+  border-radius: 6px;
+  padding: 0.6em 1em;
+  color: #e0e0e0;
+  text-decoration: none;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+  font-size: 0.9em;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.github-star-btn:hover {
+  background: #ffb86c;
+  color: #23232b;
+  border-color: #ffb86c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 184, 108, 0.3);
+}
+
+.github-star-btn svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.github-star-btn:hover svg {
+  transform: scale(1.1);
 }
 
 .terminal-window {
